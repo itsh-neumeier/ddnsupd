@@ -1,0 +1,58 @@
+services:
+  ddnsupd:
+    image: ghcr.io/itsh-neumeier/ddnsupd:${DDNSUPD_VERSION:-0.1.0-dev}
+    environment:
+      DDNSUPD_DATABASE_URL: postgres://ddnsupd:${POSTGRES_PASSWORD:?Generate .env first}@postgres:5432/ddnsupd
+      DDNSUPD_SECRET_KEY: ${DDNSUPD_SECRET_KEY:?Generate .env first}
+      DDNSUPD_SETUP_TOKEN: ${DDNSUPD_SETUP_TOKEN:?Generate .env first}
+      DDNSUPD_ENGINE_TOKEN: ${DDNSUPD_ENGINE_TOKEN:?Generate .env first}
+      DDNSUPD_ENGINE_URL: http://ddnsupd-worker:8090
+      DDNSUPD_EXTERNAL_URL: ${DDNSUPD_EXTERNAL_URL:-http://localhost:8080}
+    ports:
+      - "${DDNSUPD_BIND:-127.0.0.1}:${DDNSUPD_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ddnsupd-worker:
+        condition: service_healthy
+    networks: [data, control, egress]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=16m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  ddnsupd-worker:
+    image: ghcr.io/itsh-neumeier/ddnsupd-worker:${DDNSUPD_VERSION:-0.1.0-dev}
+    environment:
+      DDNSUPD_ENGINE_TOKEN: ${DDNSUPD_ENGINE_TOKEN:?Generate .env first}
+    networks: [control, egress]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=16m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  postgres:
+    image: postgres:17-trixie
+    user: postgres
+    environment:
+      POSTGRES_DB: ddnsupd
+      POSTGRES_USER: ddnsupd
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate .env first}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    networks: [data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U ddnsupd -d ddnsupd]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+networks:
+  data:
+    internal: true
+  control:
+    internal: true
+  egress:
+    enable_ipv6: true
+volumes:
+  postgres-data:

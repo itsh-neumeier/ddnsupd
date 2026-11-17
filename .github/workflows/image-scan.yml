@@ -1,0 +1,26 @@
+name: Image security scan
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: [docker/**, Cargo.lock, web/package-lock.json, provider-engine/**]
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f docker/app.Dockerfile -t ddnsupd:scan .
+      - run: docker build -f docker/engine.Dockerfile -t ddnsupd-worker:scan .
+      - uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ddnsupd:scan
+          format: table
+          exit-code: '1'
+          severity: CRITICAL,HIGH
+      - uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ddnsupd-worker:scan
+          format: table
+          exit-code: '1'
+          severity: CRITICAL,HIGH

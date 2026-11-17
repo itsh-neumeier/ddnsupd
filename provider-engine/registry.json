@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "id": "hetznercloud",
+      "name": "Hetzner Cloud DNS",
+      "authentication_schema": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "writeOnly": true,
+            "minLength": 1,
+            "maxLength": 8192
+          }
+        }
+      },
+      "record_types": [
+        "A",
+        "AAAA"
+      ],
+      "ip_versions": [
+        "ipv4",
+        "ipv6"
+      ],
+      "required_permissions": [
+        "Read/write API token for dedicated DNS project"
+      ],
+      "capabilities": {
+        "list_zones": true,
+        "list_records": true,
+        "read_record": true,
+        "update_existing": true,
+        "create_record": true,
+        "wildcard": true
+      },
+      "ttl_policy": "preserve_existing",
+      "options": {
+        "remote_record_id": {
+          "required": false
+        }
+      },
+      "rate_limit": {
+        "concurrency_per_account": 1,
+        "retry_after": true,
+        "discovery": "provider headers; no fixed quota assumed"
+      },
+      "error_classes": [
+        "invalid_input",
+        "unsupported",
+        "auth",
+        "permission",
+        "rate_limit",
+        "conflict",
+        "not_found",
+        "record_exists",
+        "unavailable",
+        "uncertain",
+        "internal"
+      ],
+      "documentation": "https://docs.hetzner.cloud/reference/cloud#dns",
+      "verification": "mock_tested",
+      "live_verified": false
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare",
+      "authentication_schema": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "writeOnly": true,
+            "minLength": 1,
+            "maxLength": 8192
+          }
+        }
+      },
+      "record_types": [
+        "A",
+        "AAAA"
+      ],
+      "ip_versions": [
+        "ipv4",
+        "ipv6"
+      ],
+      "required_permissions": [
+        "Zone:Read",
+        "Zone:DNS:Edit on selected zone"
+      ],
+      "capabilities": {
+        "list_zones": true,
+        "list_records": true,
+        "read_record": true,
+        "update_existing": true,
+        "create_record": false,
+        "wildcard": true
+      },
+      "ttl_policy": "preserve_existing",
+      "options": {
+        "remote_record_id": {
+          "required": true
+        }
+      },
+      "rate_limit": {
+        "concurrency_per_account": 1,
+        "retry_after": true,
+        "discovery": "provider headers; no fixed quota assumed"
+      },
+      "error_classes": [
+        "invalid_input",
+        "unsupported",
+        "auth",
+        "permission",
+        "rate_limit",
+        "conflict",
+        "not_found",
+        "unavailable",
+        "uncertain",
+        "internal"
+      ],
+      "documentation": "https://developers.cloudflare.com/api/resources/dns/",
+      "verification": "mock_tested",
+      "live_verified": false
+    }
+  ]
+}

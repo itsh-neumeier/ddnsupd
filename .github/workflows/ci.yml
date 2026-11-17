@@ -1,0 +1,50 @@
+name: Validate
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f docker/rust-tools.Dockerfile -t ddnsupd-rust-tools .
+      - run: docker run --rm -v "$PWD:/src" -w /src ddnsupd-rust-tools cargo fmt --all --check
+      - run: docker run --rm -v "$PWD:/src" -w /src ddnsupd-rust-tools cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: docker run --rm -v "$PWD:/src" -w /src ddnsupd-rust-tools cargo test --workspace --locked
+  providers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run --rm -v "$PWD/provider-engine:/src" -w /src golang:1.26-trixie go test -race ./...
+      - run: docker run --rm -v "$PWD/provider-engine:/src" -w /src golang:1.26-trixie go vet ./...
+      - run: docker build -f docker/engine.Dockerfile -t ddnsupd-worker:ci .
+  integration-and-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python scripts/check-docs.py
+      - run: python scripts/init-env.py --output .local/qa.env --port 18080
+      - run: docker compose --env-file .local/qa.env -p ddnsupd-qa -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml config --quiet
+      - run: docker compose --env-file .local/qa.env -p ddnsupd-qa -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml up -d --build --wait
+      - run: python -u tests/integration.py
+      - run: python tests/smoke.py
+      - run: python -u tests/management.py
+      - run: python scripts/init-env.py --output .local/qa-restore.env --port 18083
+      - run: docker compose --env-file .local/qa-restore.env -p ddnsupd-qa-restore -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml up -d --wait
+      - run: python -u tests/backup.py
+      - run: docker run --rm -v "$PWD/tests/browser:/src" -w /src node:22-trixie npm ci
+      - run: docker run --rm --network ddnsupd-qa_control -v "$PWD:/src" -w /src/tests/browser -e DDNSUPD_UPSTREAM=ddnsupd mcr.microsoft.com/playwright:v1.63.0-noble node e2e.mjs
+      - if: failure()
+        run: docker compose --env-file .local/qa.env -p ddnsupd-qa -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml logs --tail 60
+      - if: always()
+        run: docker compose --env-file .local/qa.env -p ddnsupd-qa -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml down --volumes
+      - if: always() && hashFiles('.local/qa-restore.env') != ''
+        run: docker compose --env-file .local/qa-restore.env -p ddnsupd-qa-restore -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml down --volumes
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run --rm -v "$PWD/web:/src" -w /src node:22-trixie npm ci
+      - run: docker run --rm -v "$PWD/web:/src" -w /src node:22-trixie npm audit --audit-level=moderate
+      - run: docker build -f docker/audit.Dockerfile -t ddnsupd-audit .
+      - run: docker run --rm -v "$PWD:/src" -w /src ddnsupd-audit python3 scripts/audit-rust.py

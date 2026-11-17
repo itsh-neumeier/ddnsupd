@@ -1,0 +1,11 @@
+services:
+  ddnsupd:
+    image: ddnsupd:dev
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+  ddnsupd-worker:
+    image: ddnsupd-worker:dev
+    build:
+      context: .
+      dockerfile: docker/engine.Dockerfile

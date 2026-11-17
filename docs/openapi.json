@@ -1,0 +1,1617 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DDNSupd API",
+    "version": "0.1.0-dev",
+    "description": "Development contract. Cookie mutations require exact configured Origin and per-session X-CSRF-Token. Default list page: 100 records. Provider credentials are never returned. Non-JSON extractor failures can use Axum's plain-text rejection format."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/backup": {
+      "post": {
+        "summary": "Download an encrypted application snapshot as an administrator",
+        "operationId": "post_backup_export",
+        "security": [{"session": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {
+          "type": "object", "required": ["passphrase"], "additionalProperties": false,
+          "properties": {"passphrase": {"type": "string", "minLength": 12, "writeOnly": true}}
+        }}}},
+        "responses": {
+          "200": {"description": "Versioned encrypted archive", "content": {"application/octet-stream": {"schema": {"type": "string", "format": "binary"}}}},
+          "403": {"description": "Permission, Origin or CSRF denied"},
+          "413": {"description": "Snapshot too large"},
+          "429": {"description": "Another backup operation is in progress"}
+        }
+      }
+    },
+    "/backup/restore": {
+      "post": {
+        "summary": "Replace existing application data as an administrator and end all sessions",
+        "operationId": "post_backup_restore",
+        "security": [{"session": []}],
+        "requestBody": {"$ref": "#/components/requestBodies/BackupRestore"},
+        "responses": {
+          "200": {"description": "Restored with all records paused"},
+          "403": {"description": "Permission, Origin or CSRF denied"},
+          "409": {"description": "Database schema version mismatch"},
+          "422": {"description": "Invalid archive or passphrase"}
+        }
+      }
+    },
+    "/setup/restore": {
+      "post": {
+        "summary": "Restore a backup on an uninitialized installation",
+        "operationId": "post_setup_restore",
+        "parameters": [{"in": "header", "name": "X-Setup-Token", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"$ref": "#/components/requestBodies/BackupRestore"},
+        "responses": {
+          "200": {"description": "Restored with all records paused"},
+          "403": {"description": "Setup token or Origin denied"},
+          "409": {"description": "Setup already complete or database schema version mismatch"},
+          "422": {"description": "Invalid archive or passphrase"}
+        }
+      }
+    },
+    "/providers/{id}/discover": {
+      "post": {
+        "summary": "Read provider zones/records; requires providers.read and provider grant or administrator. Does not verify DNS write permissions.",
+        "operationId": "post_provider_discover", "security": [{"session":[]}],
+        "parameters": [{"in":"path","name":"id","required":true,"schema":{"type":"string","format":"uuid"}},{"in":"header","name":"Origin","required":true,"schema":{"type":"string"}},{"in":"header","name":"X-CSRF-Token","required":true,"schema":{"type":"string"}}],
+        "requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["operation"],"properties":{"operation":{"enum":["zones","records"]},"zone_id":{"type":"string"},"zone_name":{"type":"string"},"page":{"type":"integer","minimum":1,"maximum":10000,"default":1}}}}}},
+        "responses":{"200":{"description":"zones, records, page, next_page and permission_verification=read_only"},"400":{"description":"Invalid request"},"403":{"description":"CSRF or permission denied"},"404":{"description":"Provider outside authorized scope"},"422":{"description":"Classified provider error"},"429":{"description":"Persistent discovery budget or provider rate limit"}}
+      }
+    },
+    "/imports/preview": {
+      "post": {
+        "summary":"Analyze upstream config against existing provider records; administrator only. Raw config/credentials are never persisted. Preview expires after ten minutes.",
+        "operationId":"post_import_preview","security":[{"session":[]}],
+        "parameters":[{"in":"header","name":"Origin","required":true,"schema":{"type":"string"}},{"in":"header","name":"X-CSRF-Token","required":true,"schema":{"type":"string"}}],
+        "requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["provider_id","zone_id","zone_name","config"],"properties":{"provider_id":{"type":"string","format":"uuid"},"zone_id":{"type":"string"},"zone_name":{"type":"string"},"config":{"type":"object","required":["settings"],"properties":{"settings":{"type":"array","minItems":1,"maxItems":200,"items":{"type":"object"}}}},"ambiguous_family":{"type":["string","null"],"enum":["A","AAAA",null]},"interval_seconds":{"type":"integer","minimum":60,"maximum":86400,"default":300}}}}}},
+        "responses":{"201":{"description":"id, digest, expires_at, normalized plan with per-entry errors/warnings; no source credentials"},"400":{"description":"Invalid source format or options"},"403":{"description":"Requires administrator, records.create and CSRF"},"422":{"description":"Provider error or bounded discovery limit"},"429":{"description":"Rate limit"},"504":{"description":"Preview discovery deadline"}}
+      }
+    },
+    "/imports/{id}/confirm": {
+      "post": {
+        "summary":"Consume user's preview once; atomically create selected local bindings, always paused. No provider writes.",
+        "operationId":"post_import_confirm","security":[{"session":[]}],
+        "parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"string","format":"uuid"}},{"in":"header","name":"Origin","required":true,"schema":{"type":"string"}},{"in":"header","name":"X-CSRF-Token","required":true,"schema":{"type":"string"}}],
+        "requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["digest","selected_indices","accept_warnings"],"properties":{"digest":{"type":"string"},"selected_indices":{"type":"array","minItems":1,"maxItems":200,"uniqueItems":true,"items":{"type":"integer","minimum":0}},"accept_warnings":{"const":true}}}}}},
+        "responses":{"201":{"description":"created array of index/id and active=false"},"400":{"description":"Missing acknowledgement, invalid selection or conflicted row"},"403":{"description":"Requires administrator and CSRF"},"404":{"description":"Preview is not owned by user"},"409":{"description":"Expired, consumed, modified preview, credential rotation or database conflict; no partial changes"}}
+      }
+    },
+    "/dashboard": {"get":{"summary":"Resource-scoped aggregate counts across all pages","operationId":"get_dashboard","security":[{"session":[]}],"responses":{"200":{"description":"Counts: total_records, verified, attention, zones, active"},"401":{"description":"Unauthenticated"},"403":{"description":"Permission denied"}}}},
+    "/setup": {
+      "get": {
+        "summary": "One-time setup status",
+        "operationId": "get__setup",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      },
+      "post": {
+        "summary": "Create first administrator; requires X-Setup-Token and exact Origin",
+        "operationId": "post__setup",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Setup-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login; exact Origin required, bounded attempts",
+        "operationId": "post__auth_login",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Current user, permissions and CSRF token",
+        "operationId": "get__auth_me",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Revoke current session",
+        "operationId": "post__auth_logout",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/auth/password": {
+      "post": {
+        "summary": "Change password and revoke all user sessions",
+        "operationId": "post__auth_password",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Password"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/providers": {
+      "get": {
+        "summary": "List authorized providers without credentials",
+        "operationId": "get__providers",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      },
+      "post": {
+        "summary": "Create provider account (administrator)",
+        "operationId": "post__providers",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/providers/{id}": {
+      "patch": {
+        "summary": "Rename/disable/replace credentials (administrator)",
+        "operationId": "patch__providers__id_",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderEdit"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete unbound provider; never deletes remote DNS",
+        "operationId": "delete__providers__id_",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/provider-registry": {
+      "get": {
+        "summary": "List implemented adapter capabilities and evidence",
+        "operationId": "get__provider_registry",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      }
+    },
+    "/records": {
+      "get": {
+        "summary": "Resource-scoped records, total and offset pagination",
+        "operationId": "get__records",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "Bind an existing remote record",
+        "operationId": "post__records",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/records/{id}": {
+      "patch": {
+        "summary": "Edit schedule, source, site and active state",
+        "operationId": "patch__records__id_",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordEdit"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove local management binding; retains history and remote DNS",
+        "operationId": "delete__records__id_",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/records/{id}/update": {
+      "post": {
+        "summary": "Enqueue/coalesce a check; cooldown still applies",
+        "operationId": "post__records__id__update",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/records/{id}/create-missing": {
+      "post": {
+        "summary": "Queue confirmed creation of a missing Hetzner A or AAAA record",
+        "description": "Requires records.create and updates.trigger, an active scoped binding and a writable Hetzner primary zone. The job respects cooldowns and fails if the RRSet already exists.",
+        "operationId": "post__records__id__create_missing",
+        "security": [{"session": []}],
+        "parameters": [
+          {"in": "path", "name": "id", "required": true, "schema": {"type": "string", "format": "uuid"}},
+          {"in": "header", "name": "Origin", "required": true, "schema": {"type": "string"}},
+          {"in": "header", "name": "X-CSRF-Token", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "202": {"description": "Creation queued"},
+          "401": {"description": "Unauthenticated"},
+          "403": {"description": "Permission, Origin or CSRF denied"},
+          "404": {"description": "Binding not found in scope"},
+          "409": {"description": "Unsupported or inactive binding, unavailable provider, or job already running"},
+          "500": {"description": "Internal error"}
+        }
+      }
+    },
+    "/history": {
+      "get": {
+        "summary": "Resource-scoped check/update history",
+        "operationId": "get__history",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "record_id",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List users (administrator)",
+        "operationId": "get__users",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      },
+      "post": {
+        "summary": "Create user (administrator)",
+        "operationId": "post__users",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewUser"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roles": {
+      "get": {
+        "summary": "List roles and permission catalog (administrator)",
+        "operationId": "get__roles",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      },
+      "post": {
+        "summary": "Create custom role (administrator)",
+        "operationId": "post__roles",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewRole"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/grants": {
+      "post": {
+        "summary": "Grant/revoke user resource scope (administrator)",
+        "operationId": "post__grants",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Origin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Grant"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit": {
+      "get": {
+        "summary": "List audited operations",
+        "operationId": "get__audit",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "This API contract",
+        "operationId": "get__openapi_json",
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Permission, Origin or CSRF denied"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        },
+        "parameters": []
+      }
+    }
+  },
+  "components": {
+    "requestBodies": {
+      "BackupRestore": {"required": true, "content": {"application/json": {"schema": {
+        "type": "object", "required": ["archive", "passphrase", "confirm"], "additionalProperties": false,
+        "properties": {
+          "archive": {"type": "string", "description": "Hex-encoded DDNSupd archive", "maxLength": 33554432},
+          "passphrase": {"type": "string", "minLength": 12, "writeOnly": true},
+          "confirm": {"const": true}
+        }
+      }}}}
+    },
+    "securitySchemes": {
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "ddnsupd_session"
+      }
+    },
+    "schemas": {
+      "Login": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 256,
+            "writeOnly": true
+          }
+        }
+      },
+      "ProviderInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "name",
+          "token"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "hetznercloud",
+              "cloudflare"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "token": {
+            "type": "string",
+            "maxLength": 8192,
+            "writeOnly": true
+          }
+        }
+      },
+      "ProviderEdit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "enabled"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string",
+            "writeOnly": true,
+            "description": "Omit to keep stored credential. Never returned."
+          }
+        }
+      },
+      "RecordInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider_id",
+          "zone_remote_id",
+          "zone_name",
+          "name",
+          "record_type"
+        ],
+        "properties": {
+          "provider_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "zone_remote_id": {
+            "type": "string"
+          },
+          "zone_name": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Relative owner or @; no implicit remote record creation."
+          },
+          "record_type": {
+            "enum": [
+              "A",
+              "AAAA"
+            ]
+          },
+          "remote_record_id": {
+            "type": "string",
+            "description": "Required for Cloudflare"
+          },
+          "manual_ip": {
+            "type": "string",
+            "default": "",
+            "description": "Empty selects fixed HTTPS family-specific discovery"
+          },
+          "managed_ip": {
+            "type": "string",
+            "default": ""
+          },
+          "active": {
+            "type": "boolean",
+            "default": false
+          },
+          "interval_seconds": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 86400,
+            "default": 300
+          },
+          "site": {
+            "type": "string",
+            "maxLength": 120
+          }
+        }
+      },
+      "RecordEdit": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "active",
+          "manual_ip",
+          "interval_seconds",
+          "site"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "manual_ip": {
+            "type": "string"
+          },
+          "interval_seconds": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 86400
+          },
+          "site": {
+            "type": "string",
+            "maxLength": 120
+          }
+        }
+      },
+      "Password": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "current",
+          "password"
+        ],
+        "properties": {
+          "current": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "password": {
+            "type": "string",
+            "minLength": 12,
+            "maxLength": 256,
+            "writeOnly": true
+          }
+        }
+      },
+      "NewUser": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "username",
+          "password",
+          "role_id"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "role_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "NewRole": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "permissions"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "permissions": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Grant": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user_id",
+          "enabled"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "record_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "description": "Exactly one of provider_id and record_id."
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "request_id"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    }
+  }
+}

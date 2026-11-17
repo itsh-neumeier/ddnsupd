@@ -1,0 +1,18 @@
+# Optional daily encrypted backups. Use a private host directory and passphrase file.
+services:
+  ddnsupd:
+    environment:
+      DDNSUPD_BACKUP_DIR: /backups
+      DDNSUPD_BACKUP_PASSPHRASE_FILE: /run/ddnsupd-backup-passphrase
+    volumes:
+      - type: bind
+        source: ${DDNSUPD_BACKUP_HOST_DIR:?Set a private backup directory}
+        target: /backups
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${DDNSUPD_BACKUP_HOST_PASSPHRASE_FILE:?Set a protected passphrase file}
+        target: /run/ddnsupd-backup-passphrase
+        read_only: true
+        bind:
+          create_host_path: false

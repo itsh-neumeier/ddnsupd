@@ -1,0 +1,21 @@
+# The mock provider engine has no public network. Only the API receives a
+# bridge for its loopback-published test port. Tests use manual fixture IPs.
+services:
+  ddnsupd:
+    networks: !override [data, control, qa-web]
+    extra_hosts:
+      - api4.ipify.org:127.0.0.1
+      - api6.ipify.org:127.0.0.1
+      - ipv4.icanhazip.com:127.0.0.1
+      - ipv6.icanhazip.com:127.0.0.1
+  ddnsupd-worker:
+    image: ddnsupd-engine:mock
+    build:
+      context: .
+      dockerfile: docker/mock-engine.Dockerfile
+    networks: !override [control]
+networks:
+  egress:
+    internal: true
+    enable_ipv6: false
+  qa-web: {}

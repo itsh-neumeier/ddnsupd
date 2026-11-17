@@ -1,0 +1,16 @@
+[package]
+name = "ddnsupd-worker"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lints]
+workspace = true
+[dependencies]
+anyhow.workspace = true
+ddnsupd-core = { path = "../ddnsupd-core" }
+reqwest.workspace = true
+serde_json.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+uuid.workspace = true

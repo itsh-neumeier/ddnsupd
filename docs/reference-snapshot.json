@@ -1,0 +1,796 @@
+{
+  "schema_version": 1,
+  "observed_on": "2026-11-03",
+  "repositories": [
+    {
+      "name": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "license": "AGPL-3.0-only"
+    },
+    {
+      "name": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "license": "MIT"
+    }
+  ],
+  "sources": [
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "AGENTS.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/AGENTS.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "CLAUDE.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/CLAUDE.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/adr/0005-job-queue-postgres.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/adr/0005-job-queue-postgres.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/adr/0008-secrets-at-rest.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/adr/0008-secrets-at-rest.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/adr/0021-guided-recovery-and-encrypted-deployment-backups.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/adr/0021-guided-recovery-and-encrypted-deployment-backups.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/adr/0029-roles-and-permissions.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/adr/0029-roles-and-permissions.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/architecture.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/architecture.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/release-workflow.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/release-workflow.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "docs/ui-guidelines.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/docs/ui-guidelines.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "LICENSE",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/LICENSE",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "README.md",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/README.md",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "web/package.json",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/web/package.json",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "web/src/app.css",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/web/src/app.css",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "web/src/lib/api.ts",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/web/src/lib/api.ts",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "web/src/lib/roles.ts",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/web/src/lib/roles.ts",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "web/src/routes/+layout.svelte",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/web/src/routes/+layout.svelte",
+      "read": true
+    },
+    {
+      "repository": "itsh-neumeier/talkops",
+      "commit": "00b968c0cb8b8d40312e52933d8c0144d1e36e34",
+      "path": "web/src/routes/login/+page.svelte",
+      "url": "https://github.com/itsh-neumeier/talkops/blob/00b968c0cb8b8d40312e52933d8c0144d1e36e34/web/src/routes/login/+page.svelte",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "Dockerfile",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/Dockerfile",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/cloudflare.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/cloudflare.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/custom.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/custom.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/desec.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/desec.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/duckdns.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/duckdns.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/dyndns.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/dyndns.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/hetzner.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/hetzner.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/hetznercloud.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/hetznercloud.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/inwx.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/inwx.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/ionos.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/ionos.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/netcup.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/netcup.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "docs/strato.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/docs/strato.md",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "go.mod",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/go.mod",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/config/pubip.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/config/pubip.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/config/update.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/config/update.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/health",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/health",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/health/check.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/health/check.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/health/handler.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/health/handler.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/health/server.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/health/server.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/params/json.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/params/json.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/persistence/json",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/persistence/json",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/persistence/json/database.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/persistence/json/database.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/persistence/json/models.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/persistence/json/models.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/constants/providers.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/constants/providers.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/provider.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/provider.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/cloudflare",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/cloudflare",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/cloudflare/provider.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/cloudflare/provider.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/custom",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/custom",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/custom/provider.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/custom/provider.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/desec",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/desec",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/duckdns",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/duckdns",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/dyn",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/dyn",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/hetznercloud",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/hetznercloud",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/hetznercloud/getrecord.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/hetznercloud/getrecord.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/hetznercloud/setrecord.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/hetznercloud/setrecord.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/hetznercloud/waitaction.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/hetznercloud/waitaction.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/inwx",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/inwx",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/ionos",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/ionos",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/netcup",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/netcup",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/netcup/update.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/netcup/update.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/provider/providers/strato",
+      "url": "https://github.com/qdm12/ddns-updater/tree/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/provider/providers/strato",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/server/handler.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/server/handler.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/server/update.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/server/update.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/update/getip.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/update/getip.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/update/ipv6.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/update/ipv6.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/update/service.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/update/service.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "internal/update/update.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/internal/update/update.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "LICENSE",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/LICENSE",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "pkg/publicip/publicip.go",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/pkg/publicip/publicip.go",
+      "read": true
+    },
+    {
+      "repository": "qdm12/ddns-updater",
+      "commit": "7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2",
+      "path": "README.md",
+      "url": "https://github.com/qdm12/ddns-updater/blob/7d6fd785f78317fc8bc53e6b245a1d33e43f3ad2/README.md",
+      "read": true
+    }
+  ],
+  "provider_inventory": [
+    {
+      "directory": "aliyun",
+      "path": "internal/provider/providers/aliyun",
+      "tree_sha": "d9fcf34a5766639747346d09f03d162e8b1cc99f"
+    },
+    {
+      "directory": "allinkl",
+      "path": "internal/provider/providers/allinkl",
+      "tree_sha": "04d87ca84f03aea48216b088d46b5ee925d21c9b"
+    },
+    {
+      "directory": "bunny",
+      "path": "internal/provider/providers/bunny",
+      "tree_sha": "9bc04f034928713fee3d681b3d7d5d8ef30eb842"
+    },
+    {
+      "directory": "changeip",
+      "path": "internal/provider/providers/changeip",
+      "tree_sha": "7b6c86fcab0047812c077636f42cb94b883aae5a"
+    },
+    {
+      "directory": "cloudflare",
+      "path": "internal/provider/providers/cloudflare",
+      "tree_sha": "86bdeffea4168f206b7b3ee3ec0c04d155904dcf"
+    },
+    {
+      "directory": "custom",
+      "path": "internal/provider/providers/custom",
+      "tree_sha": "3dc135d99633e22000fc0503f5c62a24c4a454b3"
+    },
+    {
+      "directory": "dd24",
+      "path": "internal/provider/providers/dd24",
+      "tree_sha": "ba9ec7963dbe12e68a0b2df7a40101737728d79d"
+    },
+    {
+      "directory": "ddnss",
+      "path": "internal/provider/providers/ddnss",
+      "tree_sha": "20111c9326977dab4ead8d4ec34101900b77956e"
+    },
+    {
+      "directory": "desec",
+      "path": "internal/provider/providers/desec",
+      "tree_sha": "4fce28f0a0b06b01a68a327efc235b7c5fe9eaa5"
+    },
+    {
+      "directory": "digitalocean",
+      "path": "internal/provider/providers/digitalocean",
+      "tree_sha": "dbdb0b50d5e577b9a231b44afd66c9b422a51689"
+    },
+    {
+      "directory": "dnsomatic",
+      "path": "internal/provider/providers/dnsomatic",
+      "tree_sha": "ee999422c8b844ae6d9a1ab2077c63b765e0961b"
+    },
+    {
+      "directory": "dnspod",
+      "path": "internal/provider/providers/dnspod",
+      "tree_sha": "cb2286259c4268caac0bf0d34403dd410286fc65"
+    },
+    {
+      "directory": "domeneshop",
+      "path": "internal/provider/providers/domeneshop",
+      "tree_sha": "e01fcb80b01fe442f4eae08e0193663c7041b55e"
+    },
+    {
+      "directory": "dondominio",
+      "path": "internal/provider/providers/dondominio",
+      "tree_sha": "f012b5bce70b66e1935f0fde83c2f770ade13769"
+    },
+    {
+      "directory": "dreamhost",
+      "path": "internal/provider/providers/dreamhost",
+      "tree_sha": "f0385bf3afbbd777c203d219980d9e185d61e83f"
+    },
+    {
+      "directory": "duckdns",
+      "path": "internal/provider/providers/duckdns",
+      "tree_sha": "44e1da77eb87bcdee95a6982b949ee3c2f57bc55"
+    },
+    {
+      "directory": "dyn",
+      "path": "internal/provider/providers/dyn",
+      "tree_sha": "d49c05857e341cc4da7f7f31a36551d875c63d5b"
+    },
+    {
+      "directory": "dynu",
+      "path": "internal/provider/providers/dynu",
+      "tree_sha": "dd4573089aed25925ad7ca0d03976c2088530fb6"
+    },
+    {
+      "directory": "dynv6",
+      "path": "internal/provider/providers/dynv6",
+      "tree_sha": "a73181a8700eef0027f6f49cb7114f93dca14f3e"
+    },
+    {
+      "directory": "easydns",
+      "path": "internal/provider/providers/easydns",
+      "tree_sha": "17dbffd329aafd474d6e1429c223b9d276212343"
+    },
+    {
+      "directory": "example",
+      "path": "internal/provider/providers/example",
+      "tree_sha": "6a8d1bfa1cae9608e0799e4e9cfce3af5cf24622"
+    },
+    {
+      "directory": "freedns",
+      "path": "internal/provider/providers/freedns",
+      "tree_sha": "ef25498f985bc40e7f0f8b08508813c83f79ebec"
+    },
+    {
+      "directory": "gandi",
+      "path": "internal/provider/providers/gandi",
+      "tree_sha": "25e178566918baac5a5a3eced0753a74441f0844"
+    },
+    {
+      "directory": "gcp",
+      "path": "internal/provider/providers/gcp",
+      "tree_sha": "a6490637cc0cfa0a414f3809729bb3b627733bf8"
+    },
+    {
+      "directory": "gigahostno",
+      "path": "internal/provider/providers/gigahostno",
+      "tree_sha": "8032bcc1ebe79732142d170b4879a70c19230bfe"
+    },
+    {
+      "directory": "godaddy",
+      "path": "internal/provider/providers/godaddy",
+      "tree_sha": "db4f5493ef1eb5b99a0bb051ddccd5455a806f15"
+    },
+    {
+      "directory": "goip",
+      "path": "internal/provider/providers/goip",
+      "tree_sha": "8f7cd42d425c4806514630a91de454289dd2e318"
+    },
+    {
+      "directory": "he",
+      "path": "internal/provider/providers/he",
+      "tree_sha": "3f2ef349eb94a879ab41d805858e0534b1ab6885"
+    },
+    {
+      "directory": "hetzner",
+      "path": "internal/provider/providers/hetzner",
+      "tree_sha": "4d305e18a5e85e5eda5a5da1487f2295471d43c8"
+    },
+    {
+      "directory": "hetznercloud",
+      "path": "internal/provider/providers/hetznercloud",
+      "tree_sha": "13313b4079bc6ad21b8f7b5d93d6edfcb9d46eee"
+    },
+    {
+      "directory": "hostinger",
+      "path": "internal/provider/providers/hostinger",
+      "tree_sha": "8041805e842b49236010853a7e46837ede1a9e74"
+    },
+    {
+      "directory": "infomaniak",
+      "path": "internal/provider/providers/infomaniak",
+      "tree_sha": "400dc933a3d59b9acad6a8155beb41f3193a3ded"
+    },
+    {
+      "directory": "inwx",
+      "path": "internal/provider/providers/inwx",
+      "tree_sha": "8aad4ca10d1542ae88ff6f66cc7a6040d3fde1d5"
+    },
+    {
+      "directory": "ionos",
+      "path": "internal/provider/providers/ionos",
+      "tree_sha": "212af0b3b671fd431fcdf0c45f474e1df2f1bdb5"
+    },
+    {
+      "directory": "ipv64",
+      "path": "internal/provider/providers/ipv64",
+      "tree_sha": "27c5240ea1bd35f14cdaccb7ea0027975ab05e70"
+    },
+    {
+      "directory": "linode",
+      "path": "internal/provider/providers/linode",
+      "tree_sha": "166274b95979202b900cf8892a20e536983bd245"
+    },
+    {
+      "directory": "loopia",
+      "path": "internal/provider/providers/loopia",
+      "tree_sha": "b8ca0f8d0526aaaccc496b4b3b390552d76daf8c"
+    },
+    {
+      "directory": "luadns",
+      "path": "internal/provider/providers/luadns",
+      "tree_sha": "e5fd5d8eaafabb20447d30e5f37e0f80d6c46d55"
+    },
+    {
+      "directory": "myaddr",
+      "path": "internal/provider/providers/myaddr",
+      "tree_sha": "1732f9e80e3f59414715d53c22ce0c576131e37e"
+    },
+    {
+      "directory": "namecheap",
+      "path": "internal/provider/providers/namecheap",
+      "tree_sha": "278dcc676a862deb036c1933e581b698fee419c2"
+    },
+    {
+      "directory": "namecom",
+      "path": "internal/provider/providers/namecom",
+      "tree_sha": "c17f2d24f4866ba6e7c4c7f2a0fd2ddcad90bded"
+    },
+    {
+      "directory": "namesilo",
+      "path": "internal/provider/providers/namesilo",
+      "tree_sha": "c80a22a719cdba4cb33f8738646038140b724a54"
+    },
+    {
+      "directory": "netcup",
+      "path": "internal/provider/providers/netcup",
+      "tree_sha": "10f065e19be0b6604afc4a0191a0f4ab4f99bd89"
+    },
+    {
+      "directory": "njalla",
+      "path": "internal/provider/providers/njalla",
+      "tree_sha": "48574aff0b6ef61c2e0c3f6900088da82d0f8457"
+    },
+    {
+      "directory": "noip",
+      "path": "internal/provider/providers/noip",
+      "tree_sha": "b06c836999d7d9dd02957951c16a9e265f4ee858"
+    },
+    {
+      "directory": "nowdns",
+      "path": "internal/provider/providers/nowdns",
+      "tree_sha": "9507ed547294b5e833493e71e35d9f553e4eafbd"
+    },
+    {
+      "directory": "opendns",
+      "path": "internal/provider/providers/opendns",
+      "tree_sha": "6cdd8e5d87118568f08692d9ae72eb4dcca2dd9b"
+    },
+    {
+      "directory": "ovh",
+      "path": "internal/provider/providers/ovh",
+      "tree_sha": "e2cbc931e741a9e99afa9cd3f13e96c876b337fe"
+    },
+    {
+      "directory": "porkbun",
+      "path": "internal/provider/providers/porkbun",
+      "tree_sha": "b4b20e11f2df6257b38dbb04b8ac22b683cc067e"
+    },
+    {
+      "directory": "route53",
+      "path": "internal/provider/providers/route53",
+      "tree_sha": "5e93564f30958244ea6fe36917789cd9b1278472"
+    },
+    {
+      "directory": "scaleway",
+      "path": "internal/provider/providers/scaleway",
+      "tree_sha": "24e12eda07a4224d698655ac3e0085af7a35b1f6"
+    },
+    {
+      "directory": "selfhostde",
+      "path": "internal/provider/providers/selfhostde",
+      "tree_sha": "a9543734ab12317bbd16e4c88a70ef365dd8dc4a"
+    },
+    {
+      "directory": "servercow",
+      "path": "internal/provider/providers/servercow",
+      "tree_sha": "6ed127c80a4ed6f29e7d40512d9e07dab9c92646"
+    },
+    {
+      "directory": "spaceship",
+      "path": "internal/provider/providers/spaceship",
+      "tree_sha": "6342f90462634385ebed3797a1b2b2eb68f104ca"
+    },
+    {
+      "directory": "spdyn",
+      "path": "internal/provider/providers/spdyn",
+      "tree_sha": "2d50255b36a1de95b71a8a74c01f80794a8c447a"
+    },
+    {
+      "directory": "strato",
+      "path": "internal/provider/providers/strato",
+      "tree_sha": "6bd71050963bf0e81ea6732bd9dabd6d340ecd69"
+    },
+    {
+      "directory": "variomedia",
+      "path": "internal/provider/providers/variomedia",
+      "tree_sha": "14c8c81a42526b967080a42ce704be8e09d50a20"
+    },
+    {
+      "directory": "vercel",
+      "path": "internal/provider/providers/vercel",
+      "tree_sha": "560562e73aedd2004af289fe64c32d8d9feeb172"
+    },
+    {
+      "directory": "vultr",
+      "path": "internal/provider/providers/vultr",
+      "tree_sha": "8d86fa4b3c4458ac32e24bb30e72f91f26c19289"
+    },
+    {
+      "directory": "zoneedit",
+      "path": "internal/provider/providers/zoneedit",
+      "tree_sha": "6145739c1da329512ac7325b3854383f46db2bd3"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Manual preparation only. This workflow cannot publish images or releases.
+# Add an approved, protected publication job after release acceptance.
+name: Prepare release artifacts
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f docker/app.Dockerfile -t ddnsupd:candidate .
+      - run: docker build -f docker/engine.Dockerfile -t ddnsupd-worker:candidate .
+      - run: docker save -o ddnsupd-candidate.tar ddnsupd:candidate ddnsupd-worker:candidate
+      - uses: actions/upload-artifact@v4
+        with:
+          name: local-release-candidate
+          path: ddnsupd-candidate.tar
