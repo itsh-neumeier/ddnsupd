@@ -66,19 +66,23 @@ jobs:
       - uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ddnsupd:release
+          version: v0.76.1
           scanners: vuln
           severity: CRITICAL,HIGH
           exit-code: '1'
-          format: spdx-json
-          output: ddnsupd-sbom.spdx.json
+          format: table
       - uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ddnsupd-worker:release
+          version: v0.76.1
           scanners: vuln
           severity: CRITICAL,HIGH
           exit-code: '1'
-          format: spdx-json
-          output: ddnsupd-worker-sbom.spdx.json
+          format: table
+      - name: Generate SBOMs
+        run: |
+          trivy image --cache-dir .cache/trivy --format spdx-json --output ddnsupd-sbom.spdx.json ddnsupd:release
+          trivy image --cache-dir .cache/trivy --format spdx-json --output ddnsupd-worker-sbom.spdx.json ddnsupd-worker:release
       - name: Publish images and release
         env:
           GH_TOKEN: ${{ github.token }}

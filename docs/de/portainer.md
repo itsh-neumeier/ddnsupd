@@ -22,6 +22,8 @@ benötigt funktionierenden öffentlichen IPv6-Zugang für automatische AAAA-Upda
 `python scripts/init-env.py` erzeugt die vier Geheimnisse in einer privaten
 `.env`. Portainer kann sie über **Load variables from .env file** importieren.
 Passe URL und Port für deinen Zielhost an. Bewahre diese Werte geschützt auf.
+Setze beim Import einer erzeugten `.env` außerdem `DDNSUPD_BIND=0.0.0.0`,
+damit du DDNSupd über die LAN-Adresse des Zielhosts öffnen kannst.
 
 Der Portainer-Stack veröffentlicht den Webport standardmäßig auf allen
 Host-Schnittstellen. Mit `DDNSUPD_BIND` kannst du eine bestimmte Adresse

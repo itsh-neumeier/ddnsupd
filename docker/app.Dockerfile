@@ -14,7 +14,7 @@ COPY docs/openapi.json ./docs/openapi.json
 COPY provider-engine/registry.json ./provider-engine/registry.json
 RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/src/target cargo build --release --locked -p ddnsupd-api && cp target/release/ddnsupd-api /ddnsupd
 
-FROM gcr.io/distroless/cc-debian13:nonroot@sha256:08476c244888bfb425bae1ae4dd7c17f093e972aab8426883d97f3c6f280f7c1
+FROM gcr.io/distroless/cc-debian13:nonroot@sha256:cb87acc574abe719b6e5c547384defa2f7b1f24af9605d3f618cf852495d8be2
 WORKDIR /app
 COPY --from=rust /ddnsupd /app/ddnsupd
 COPY --from=web /src/web/build /app/web
