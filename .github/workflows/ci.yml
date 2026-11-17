@@ -48,6 +48,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker run --rm -v "$PWD/web:/src" -w /src node:22-trixie npm ci
-      - run: docker run --rm -v "$PWD/web:/src" -w /src node:22-trixie npm audit --audit-level=moderate
+      - run: docker run --rm -v "$PWD:/src" -w /src/web node:22-trixie node ../scripts/audit-web.mjs
       - run: docker build -f docker/audit.Dockerfile -t ddnsupd-audit .
       - run: docker run --rm -v "$PWD:/src" -w /src ddnsupd-audit python3 scripts/audit-rust.py

@@ -1,5 +1,11 @@
 # Local verification record
 
+For 0.1.2, the full npm build graph reports GHSA-fc5q-39xc-vjpf in picomatch
+4.0.7. No patched upstream version is available at 2026-11-17. A bounded
+build-only exception expires on 2026-12-17. The shipped application has no
+Node runtime. See [the npm audit wrapper](../scripts/audit-web.mjs) and
+[the upstream advisory](https://github.com/advisories/GHSA-fc5q-39xc-vjpf).
+
 On 2026-11-17 two isolated QA databases with different runtime encryption
 keys verified setup authorization and confirmation, wrong passphrase and
 tampering rejection, uploads above the normal API body limit, database and
