@@ -5,13 +5,13 @@ benötigt funktionierenden öffentlichen IPv6-Zugang für automatische AAAA-Upda
 
 1. Öffne **Stacks → Add stack → Git repository**.
 2. Verwende als Repository URL `https://github.com/itsh-neumeier/ddnsupd`.
-3. Setze Repository reference auf `refs/tags/v0.1.0`.
+3. Setze Repository reference auf `refs/tags/v0.1.1`.
 4. Setze Compose path auf `docker-compose.portainer.yml`.
 5. Hinterlege die folgenden Environment variables und wähle **Deploy the stack**.
 
 | Variable | Wert |
 | --- | --- |
-| DDNSUPD_VERSION | `0.1.0` |
+| DDNSUPD_VERSION | `0.1.1` |
 | DDNSUPD_EXTERNAL_URL | Die URL im Browser, etwa `http://192.168.10.20:8080` oder deine HTTPS-URL |
 | DDNSUPD_PORT | `8080` oder dein freier Host-Port |
 | POSTGRES_PASSWORD | Zufällige Hex-Zeichenfolge mit 48 Zeichen |

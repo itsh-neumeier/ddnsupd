@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "DDNSupd API",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Development contract. Cookie mutations require exact configured Origin and per-session X-CSRF-Token. Default list page: 100 records. Provider credentials are never returned. Non-JSON extractor failures can use Axum's plain-text rejection format."
   },
   "servers": [

@@ -5,7 +5,7 @@
 Self-hosted Dynamic DNS management with a Rust API, Svelte web portal,
 PostgreSQL and a private Go provider engine. Licensed **AGPL-3.0-only**.
 
-**Current release:** 0.1.0 for Linux/amd64. Setup, authentication, scoped
+**Current release:** 0.1.1 for Linux/amd64. Setup, authentication, scoped
 permissions, provider credentials, scheduled A/AAAA reconciliation, history,
 discovery, imports and encrypted recovery are included. Hetzner Cloud and
 Cloudflare adapters have mock verification. See the provider matrix for scope.
@@ -14,7 +14,7 @@ Cloudflare adapters have mock verification. See the provider matrix for scope.
 
 Repository URL: `https://github.com/itsh-neumeier/ddnsupd`
 
-Repository reference: `refs/tags/v0.1.0`
+Repository reference: `refs/tags/v0.1.1`
 
 Compose path: `docker-compose.portainer.yml`
 
@@ -23,8 +23,8 @@ The stack includes IPv4/IPv6 egress. Follow the [Portainer guide](docs/de/portai
 
 For a regular Compose deployment, generate the private `.env` and run
 `docker compose up -d --wait`. Images are
-`ghcr.io/itsh-neumeier/ddnsupd:0.1.0` and
-`ghcr.io/itsh-neumeier/ddnsupd-worker:0.1.0`.
+`ghcr.io/itsh-neumeier/ddnsupd:0.1.1` and
+`ghcr.io/itsh-neumeier/ddnsupd-worker:0.1.1`.
 
 ## Run from source
 

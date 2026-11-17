@@ -1,6 +1,6 @@
 # Installation and first steps
 
-Release 0.1.0 provides Linux/amd64 images on GHCR. Use the base Compose file
+Release 0.1.1 provides Linux/amd64 images on GHCR. Use the base Compose file
 for release images or the development override for source builds.
 Compose 2.24.4+ is required for the test override's explicit list replacement.
 

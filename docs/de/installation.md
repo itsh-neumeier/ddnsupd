@@ -1,6 +1,6 @@
 # Installation und erste Schritte
 
-Release 0.1.0 bietet Linux/amd64-Images auf GHCR. Die Basis-Compose-Datei nutzt
+Release 0.1.1 bietet Linux/amd64-Images auf GHCR. Die Basis-Compose-Datei nutzt
 diese Images. Für Portainer gibt es eine [eigene Anleitung](portainer.md).
 Der Entwicklungs-Override baut aus Quellen. Für Tests ist Compose 2.24.4+ nötig.
 

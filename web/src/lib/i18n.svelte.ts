@@ -200,7 +200,7 @@ const en = {
   rate_limited: 'Too many attempts. Try again in five minutes.',
   invalid_input: 'Check the input values.',
   conflict: 'This resource exists, is in use, or has changed.',
-  version: '0.1.0',
+  version: '0.1.1',
   selfHosted: 'Self-hosted DNS management',
   verification:
     'Provider adapters tested with mocks. Live integration not yet verified.',
@@ -468,7 +468,7 @@ const de: Record<keyof typeof en, string> = {
   invalid_input: 'Bitte prüfe die Eingaben.',
   conflict:
     'Die Ressource existiert bereits, wird verwendet oder wurde geändert.',
-  version: '0.1.0',
+  version: '0.1.1',
   selfHosted: 'Selbst gehostetes DNS-Management',
   verification:
     'Provideradapter mit Mocks getestet. Live-Integration noch nicht verifiziert.',
