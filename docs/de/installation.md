@@ -1,8 +1,8 @@
 # Installation und erste Schritte
 
-Dies ist ein Entwicklungsstand. Bis zur freigegebenen Veröffentlichung wird
-der Stack aus den Quellen gebaut. Zielumgebungen sind Docker Engine unter
-Linux und Docker Desktop. Für den Test-Override ist Compose 2.24.4+ nötig.
+Release 0.1.0 bietet Linux/amd64-Images auf GHCR. Die Basis-Compose-Datei nutzt
+diese Images. Für Portainer gibt es eine [eigene Anleitung](portainer.md).
+Der Entwicklungs-Override baut aus Quellen. Für Tests ist Compose 2.24.4+ nötig.
 
 Die Startbefehle stehen in der [README](../../README.md). `.env` enthält private
 Laufzeitwerte. Unter Windows zusätzlich die NTFS-Zugriffsrechte auf dein Konto

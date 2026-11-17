@@ -5,12 +5,26 @@
 Self-hosted Dynamic DNS management with a Rust API, Svelte web portal,
 PostgreSQL and a private Go provider engine. Licensed **AGPL-3.0-only**.
 
-**Current state:** local development MVP, not a production release. Phase 0
-analysis is complete; a tested vertical slice covers setup, authentication,
-resource permissions, provider credentials, existing-record management,
-scheduled reconciliation, manual checks and history. Hetzner Cloud and
-Cloudflare adapters have mock verification. No live DNS integration has been
-verified, and no images have been published.
+**Current release:** 0.1.0 for Linux/amd64. Setup, authentication, scoped
+permissions, provider credentials, scheduled A/AAAA reconciliation, history,
+discovery, imports and encrypted recovery are included. Hetzner Cloud and
+Cloudflare adapters have mock verification. See the provider matrix for scope.
+
+## Portainer and release images
+
+Repository URL: `https://github.com/itsh-neumeier/ddnsupd`
+
+Repository reference: `refs/tags/v0.1.0`
+
+Compose path: `docker-compose.portainer.yml`
+
+Set the private environment variables and the external URL before deploying.
+The stack includes IPv4/IPv6 egress. Follow the [Portainer guide](docs/de/portainer.md).
+
+For a regular Compose deployment, generate the private `.env` and run
+`docker compose up -d --wait`. Images are
+`ghcr.io/itsh-neumeier/ddnsupd:0.1.0` and
+`ghcr.io/itsh-neumeier/ddnsupd-worker:0.1.0`.
 
 ## Run from source
 
@@ -34,9 +48,8 @@ The environment generator refuses to overwrite an existing file. Keep it and
 the PostgreSQL volume together: losing or replacing `DDNSUPD_SECRET_KEY`
 prevents credential decryption. Do not use test credentials in a real instance.
 
-The base Compose file has versioned GHCR references without a build phase.
-Those references are publication targets, **not currently available releases**.
-Use the development override until an approved release is published.
+The base Compose file uses versioned GHCR images. The development override
+builds the same services from source.
 
 ## Use the portal
 

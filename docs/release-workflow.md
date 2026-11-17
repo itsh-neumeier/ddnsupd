@@ -28,6 +28,10 @@ checks the final combined revision, versions, lockfiles, migrations, translation
 all required CI results and the source/license bundle. Tagging/pushing images,
 creating a remote repository and production deployment require user authorization.
 
+Tag pushes matching `v*` run the publication workflow. It checks for a successful
+Validate run on the same commit, builds and scans both images, publishes
+versioned and latest GHCR tags, and creates a release with source and SBOMs.
+
 Release gates: Rust fmt/clippy/tests, API auth/grant/job integration tests,
 Go provider mock tests and vet/race, frontend lint/check/build, Compose config,
 Docker build/smoke, browser E2E, dependency and image scans, backup recovery.

@@ -1,19 +1,97 @@
-# Manual preparation only. This workflow cannot publish images or releases.
-# Add an approved, protected publication job after release acceptance.
-name: Prepare release artifacts
+name: Publish release
 on:
+  push:
+    tags: ['v*']
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
-  build:
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -f docker/app.Dockerfile -t ddnsupd:candidate .
-      - run: docker build -f docker/engine.Dockerfile -t ddnsupd-worker:candidate .
-      - run: docker save -o ddnsupd-candidate.tar ddnsupd:candidate ddnsupd-worker:candidate
-      - uses: actions/upload-artifact@v4
+      - name: Verify release and validation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          grep -q "version = \"$version\"" Cargo.toml
+          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&event=push" \
+            --jq '.workflow_runs | any(.conclusion == "success")' | grep -qx true
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
-          name: local-release-candidate
-          path: ddnsupd-candidate.tar
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build application
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/app.Dockerfile
+          load: true
+          tags: ddnsupd:release
+          platforms: linux/amd64
+          cache-from: type=gha,scope=release-app
+          cache-to: type=gha,mode=max,scope=release-app
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.ref_name }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+      - name: Build provider engine
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/engine.Dockerfile
+          load: true
+          tags: ddnsupd-worker:release
+          platforms: linux/amd64
+          cache-from: type=gha,scope=release-engine
+          cache-to: type=gha,mode=max,scope=release-engine
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ github.ref_name }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+      - uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ddnsupd:release
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          format: spdx-json
+          output: ddnsupd-sbom.spdx.json
+      - uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ddnsupd-worker:release
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          format: spdx-json
+          output: ddnsupd-worker-sbom.spdx.json
+      - name: Publish images and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          for image in ddnsupd ddnsupd-worker; do
+            docker tag "$image:release" "ghcr.io/$owner/$image:$version"
+            docker push "ghcr.io/$owner/$image:$version"
+            docker tag "$image:release" "ghcr.io/$owner/$image:latest"
+            docker push "ghcr.io/$owner/$image:latest"
+          done
+          git archive --format=tar.gz --prefix="ddnsupd-$version/" -o ddnsupd-source.tar.gz HEAD
+          sha256sum ddnsupd-source.tar.gz ./*sbom.spdx.json > SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" ddnsupd-source.tar.gz ./*sbom.spdx.json SHA256SUMS \
+            --title "DDNSupd $version" --notes-file "docs/releases/$GITHUB_REF_NAME.md" --verify-tag

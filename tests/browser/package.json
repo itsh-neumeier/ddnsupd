@@ -2,6 +2,11 @@
   "name": "ddnsupd-browser-tests",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node e2e.mjs" },
-  "devDependencies": { "playwright": "1.63.0" }
+  "scripts": {
+    "test": "node e2e.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  },
+  "version": "0.1.0"
 }
