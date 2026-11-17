@@ -1,6 +1,6 @@
 services:
   ddnsupd:
-    image: ghcr.io/itsh-neumeier/ddnsupd:${DDNSUPD_VERSION:-0.1.1}
+    image: ghcr.io/itsh-neumeier/ddnsupd:${DDNSUPD_VERSION:-0.1.2}
     environment:
       DDNSUPD_DATABASE_URL: postgres://ddnsupd:${POSTGRES_PASSWORD:?Generate .env first}@postgres:5432/ddnsupd
       DDNSUPD_SECRET_KEY: ${DDNSUPD_SECRET_KEY:?Generate .env first}
@@ -22,7 +22,7 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
   ddnsupd-worker:
-    image: ghcr.io/itsh-neumeier/ddnsupd-worker:${DDNSUPD_VERSION:-0.1.1}
+    image: ghcr.io/itsh-neumeier/ddnsupd-worker:${DDNSUPD_VERSION:-0.1.2}
     environment:
       DDNSUPD_ENGINE_TOKEN: ${DDNSUPD_ENGINE_TOKEN:?Generate .env first}
     networks: [control, egress]

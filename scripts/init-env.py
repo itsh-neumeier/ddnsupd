@@ -9,7 +9,7 @@ parser.add_argument("--port", type=int, default=8080)
 args = parser.parse_args()
 path = Path(args.output)
 path.parent.mkdir(parents=True, exist_ok=True)
-content = f"""DDNSUPD_VERSION=0.1.1
+content = f"""DDNSUPD_VERSION=0.1.2
 DDNSUPD_BIND=127.0.0.1
 DDNSUPD_PORT={args.port}
 DDNSUPD_EXTERNAL_URL=http://localhost:{args.port}

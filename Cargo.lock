@@ -345,7 +345,7 @@ dependencies = [
 
 [[package]]
 name = "ddnsupd-api"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "axum",
@@ -367,7 +367,7 @@ dependencies = [
 
 [[package]]
 name = "ddnsupd-core"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "argon2",
  "chacha20poly1305",
@@ -382,7 +382,7 @@ dependencies = [
 
 [[package]]
 name = "ddnsupd-worker"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "ddnsupd-core",

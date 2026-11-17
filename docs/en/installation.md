@@ -1,6 +1,6 @@
 # Installation and first steps
 
-Release 0.1.1 provides Linux/amd64 images on GHCR. Use the base Compose file
+Release 0.1.2 provides Linux/amd64 images on GHCR. Use the base Compose file
 for release images or the development override for source builds.
 Compose 2.24.4+ is required for the test override's explicit list replacement.
 
@@ -14,6 +14,10 @@ Only port 8080 is published, on 127.0.0.1 by default. PostgreSQL and the engine
 have no published ports. To use another local port, generate `.env` with
 `python scripts/init-env.py --port 8081` before the first start. The external
 URL must match the browser Origin exactly, including its port.
+
+The application key requires exactly 64 hexadecimal characters. Generate it
+with `scripts/init-env.py`. HTTP is supported on localhost and private LAN IP
+addresses. Other origins require HTTPS.
 
 ## Reverse proxy / Zoraxy
 

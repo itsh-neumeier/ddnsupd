@@ -40,10 +40,16 @@ async fn main() -> anyhow::Result<()> {
         .with_env_filter("ddnsupd_api=info,ddnsupd_worker=info")
         .init();
     let database_url = std::env::var("DDNSUPD_DATABASE_URL")?;
-    let key_bytes = hex::decode(std::env::var("DDNSUPD_SECRET_KEY")?)?;
-    let key: [u8; 32] = key_bytes
-        .try_into()
-        .map_err(|_| anyhow::anyhow!("secret key must be 32 bytes of hex"))?;
+    let key_bytes = hex::decode(std::env::var("DDNSUPD_SECRET_KEY")?).map_err(|_| {
+        anyhow::anyhow!(
+            "DDNSUPD_SECRET_KEY must contain exactly 64 hexadecimal characters (0-9, a-f)"
+        )
+    })?;
+    let key: [u8; 32] = key_bytes.try_into().map_err(|_| {
+        anyhow::anyhow!(
+            "DDNSUPD_SECRET_KEY must contain exactly 64 hexadecimal characters (0-9, a-f)"
+        )
+    })?;
     let origin = std::env::var("DDNSUPD_EXTERNAL_URL")
         .unwrap_or("http://localhost:8080".into())
         .trim_end_matches('/')
@@ -57,11 +63,19 @@ async fn main() -> anyhow::Result<()> {
             && url.password().is_none(),
         "external URL must be an origin"
     );
+    let private_http = url.host_str().is_some_and(|host| {
+        host == "localhost"
+            || host
+                .trim_matches(['[', ']'])
+                .parse::<std::net::IpAddr>()
+                .is_ok_and(|ip| match ip {
+                    std::net::IpAddr::V4(ip) => ip.is_loopback() || ip.is_private(),
+                    std::net::IpAddr::V6(ip) => ip.is_loopback() || ip.is_unique_local(),
+                })
+    });
     anyhow::ensure!(
-        url.scheme() == "https"
-            || (url.scheme() == "http"
-                && matches!(url.host_str(), Some("localhost" | "127.0.0.1"))),
-        "HTTP is allowed only on localhost; configure HTTPS behind your proxy"
+        url.scheme() == "https" || (url.scheme() == "http" && private_http),
+        "HTTP requires localhost or a private LAN address; configure HTTPS for other origins"
     );
     let setup_token = std::env::var("DDNSUPD_SETUP_TOKEN")?;
     let engine_token = std::env::var("DDNSUPD_ENGINE_TOKEN")?;

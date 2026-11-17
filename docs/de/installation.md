@@ -1,6 +1,6 @@
 # Installation und erste Schritte
 
-Release 0.1.1 bietet Linux/amd64-Images auf GHCR. Die Basis-Compose-Datei nutzt
+Release 0.1.2 bietet Linux/amd64-Images auf GHCR. Die Basis-Compose-Datei nutzt
 diese Images. Für Portainer gibt es eine [eigene Anleitung](portainer.md).
 Der Entwicklungs-Override baut aus Quellen. Für Tests ist Compose 2.24.4+ nötig.
 
@@ -10,6 +10,10 @@ beschränken. Im Named Volume `postgres-data` liegen die Anwendungsdaten.
 API und Engine laufen als UID/GID 10001 mit schreibgeschütztem Root-Dateisystem,
 temporärem Speicher und ohne Linux-Capabilities. PostgreSQL nutzt seinen eigenen
 Benutzer. Nur der Webport ist standardmäßig an 127.0.0.1:8080 veröffentlicht.
+
+Der Anwendungsschlüssel benötigt exakt 64 Hex-Zeichen aus `0-9` und `a-f`.
+`scripts/init-env.py` erzeugt das passende Format. HTTP unterstützt localhost
+und private LAN-IP-Adressen. Für andere Origins wird HTTPS benötigt.
 
 ## Einrichtung
 
